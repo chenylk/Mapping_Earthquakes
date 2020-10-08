@@ -45,7 +45,7 @@ d3.json('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         return {
             opacity: 1,
             fillOpacity:1,
-            fillColor: '#ffae42',
+            fillColor: getColor(feature.properties.mag),
             color: '#000000',
             radius: getRadius(feature.properties.mag),
             stroke: true,
@@ -53,6 +53,26 @@ d3.json('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         }
     };
     
+    //this function determines the color of the circle based on the magnitude of the earthquake
+    function getColor(magnitude) {
+        if (magnitude > 5) {
+          return "#ea2c2c";
+        }
+        if (magnitude > 4) {
+          return "#ea822c";
+        }
+        if (magnitude > 3) {
+          return "#ee9c00";
+        }
+        if (magnitude > 2) {
+          return "#eecc00";
+        }
+        if (magnitude > 1) {
+          return "#d4ee00";
+        }
+        return "#98ee00";
+      };
+
     //this function determines the radius of the earthquake marker based on its magnitude
     // Earthquakes with a magnitude of 0 will be plotted with a raidus of 1
     function getRadius(magnitude) {
@@ -71,7 +91,13 @@ d3.json('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
             return L.circleMarker(latlng);
         },
         //we set the style for each circleMarker using our styleInfo function
-        style:styleInfo
+        style:styleInfo,
+        
+        //we create a popup for each circleMarker to display the magnitude and
+        //location of the earthquake after the marker has been created and styled
+        onEachFeature: function(feature,layer) {
+            layer.bindPopup('Magnitude:' + feature.properties.mag + '<br>Location: ' + feature.properties.place);
+        }
 
     }).addTo(map);
 });
