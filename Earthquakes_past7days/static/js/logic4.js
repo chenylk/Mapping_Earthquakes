@@ -18,6 +18,15 @@ let baseMaps = {
     'Satellite': satelliteStreets
 };
 
+//create the earthquake layer for our map.
+let earthquakes = new L.layerGroup();
+
+//We define an object that contains the overlays.
+//This overlay will be visible all the time.
+let overlays = {
+    Earthquakes: earthquakes
+};
+
 // create the map object with a center and zoom level and default layer
 let map = L.map('mapid', {
     center: [39.5, -98.5],
@@ -26,7 +35,7 @@ let map = L.map('mapid', {
 });
 
 // Pass our map layers into our layers control and add the layers control to the map.
-L.control.layers(baseMaps).addTo(map);
+L.control.layers(baseMaps, overlays).addTo(map);
 
 // Create a style for the lines
 let myStyle = {
@@ -99,9 +108,12 @@ d3.json('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
             layer.bindPopup('Magnitude:' + feature.properties.mag + '<br>Location: ' + feature.properties.place);
         }
 
-    }).addTo(map);
+    }).addTo(earthquakes);
 });
 
-// Then we add our 'graymap' tile layer to the map.
+// Then we add the earthquake layer to our map
+earthquakes.addTo(map);
+
+// Then we add our tile layers
 streets.addTo(map);
 satelliteStreets.addTo(map);
